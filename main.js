@@ -4,19 +4,8 @@ const TOTAL_CELLS = GRID_SIZE * GRID_SIZE;
 const board = document.getElementById("board");
 const statusEl = document.getElementById("status");
 const resetButton = document.getElementById("resetButton");
-const sampleButton = document.getElementById("sampleButton");
-
-const sampleValues = [
-  "大目標",
-  "習慣",
-  "学び",
-  "健康",
-  "発信",
-  "仕事",
-  "チーム",
-  "時間管理",
-  "振り返り",
-];
+const sampleGameButton = document.getElementById("sampleGameButton");
+const sampleMoyamoyaButton = document.getElementById("sampleMoyamoyaButton");
 
 const blockHues = [
   12,
@@ -48,7 +37,45 @@ const linkMap = new Map(
 );
 
 const state = loadState();
+const centerTemplatePlaceholders = new Map();
 let saveTimer = null;
+
+const centerTemplates = {
+  game: [
+    [
+      { value: "どうやって遊ぶかな？" },
+      { value: "ゲームの魅力を書いてみて！" },
+      { value: "どんな機能が使われているかな？" },
+    ],
+    [
+      { value: "どんな人がハマっていそう？" },
+      { placeholder: "ここに、自分の好きなゲームを書いてみよう" },
+      { value: "特にどんな時が楽しい？" },
+    ],
+    [
+      { placeholder: "自分で深掘りポイントを考えてみよう！" },
+      { placeholder: "自分で深掘りポイントを考えてみよう！" },
+      { placeholder: "自分で深掘りポイントを考えてみよう！" },
+    ],
+  ],
+  moyamoya: [
+    [
+      { value: "どうして困っているのかな？" },
+      { value: "いつ・どこで困るかな？" },
+      { value: "どんな人が困っているかな？" },
+    ],
+    [
+      { value: "どうやって解決したいかな？" },
+      { placeholder: "ここに、解決したいモヤモヤを書いてみよう" },
+      { value: "何かに例えたりできないかな？" },
+    ],
+    [
+      { placeholder: "自分で深掘りポイントを考えてみよう！" },
+      { placeholder: "自分で深掘りポイントを考えてみよう！" },
+      { placeholder: "自分で深掘りポイントを考えてみよう！" },
+    ],
+  ],
+};
 
 function loadState() {
   try {
@@ -138,6 +165,41 @@ function getBlockHue(row, col) {
   return blockHues[blockRow * 3 + blockCol];
 }
 
+function getCenterBlockCellIndex(localRow, localCol) {
+  const row = localRow + 2;
+  const col = localCol + 2;
+  return row * GRID_SIZE + col;
+}
+
+function applyCenterTemplate(template) {
+  centerTemplatePlaceholders.clear();
+
+  for (let localRow = 1; localRow <= 3; localRow += 1) {
+    for (let localCol = 1; localCol <= 3; localCol += 1) {
+      const index = getCenterBlockCellIndex(localRow, localCol);
+      const entry = template[localRow - 1][localCol - 1];
+
+      if (entry.placeholder) {
+        state[index] = "";
+        centerTemplatePlaceholders.set(index, entry.placeholder);
+      } else {
+        state[index] = entry.value;
+      }
+    }
+  }
+
+  syncAllLinkedCells();
+
+  const textareas = board.querySelectorAll("textarea");
+  textareas.forEach((textarea, index) => {
+    textarea.value = state[index];
+    textarea.placeholder = centerTemplatePlaceholders.get(index) || "";
+    updateCellVisual(index, state[index]);
+  });
+
+  persistState();
+}
+
 function renderBoard() {
   board.innerHTML = "";
 
@@ -164,6 +226,7 @@ function renderBoard() {
     textarea.dataset.index = String(index);
     textarea.setAttribute("aria-label", `セル ${index + 1}`);
     textarea.value = state[index];
+    textarea.placeholder = centerTemplatePlaceholders.get(index) || "";
 
     textarea.addEventListener("input", () => {
       state[index] = textarea.value;
@@ -205,53 +268,23 @@ function clearBoard() {
     state[index] = "";
   }
 
+  centerTemplatePlaceholders.clear();
+
   syncAllLinkedCells();
 
   const textareas = board.querySelectorAll("textarea");
   textareas.forEach((textarea, index) => {
     textarea.value = "";
+    textarea.placeholder = "";
     updateCellVisual(index, "");
   });
 
   persistState();
 }
 
-function fillSample() {
-  const labels = [
-    "大目標",
-    "仕事",
-    "学習",
-    "健康",
-    "生活",
-    "発信",
-    "人間関係",
-    "整理",
-    "習慣",
-  ];
-
-  for (let index = 0; index < TOTAL_CELLS; index += 1) {
-    const row = Math.floor(index / GRID_SIZE);
-    const col = index % GRID_SIZE;
-    const isCore = row === 4 && col === 4;
-    const isAnchor = row % 3 === 1 && col % 3 === 1;
-    const nextValue = isCore ? "1つの中心目標" : isAnchor ? labels[(row + col) % labels.length] : sampleValues[(index + row) % sampleValues.length];
-
-    state[index] = nextValue;
-  }
-
-  syncAllLinkedCells();
-
-  const textareas = board.querySelectorAll("textarea");
-  textareas.forEach((textarea, index) => {
-    textarea.value = state[index];
-    updateCellVisual(index, state[index]);
-  });
-
-  persistState();
-}
-
 resetButton.addEventListener("click", clearBoard);
-sampleButton.addEventListener("click", fillSample);
+sampleGameButton.addEventListener("click", () => applyCenterTemplate(centerTemplates.game));
+sampleMoyamoyaButton.addEventListener("click", () => applyCenterTemplate(centerTemplates.moyamoya));
 
 renderBoard();
 syncAllLinkedCells();
