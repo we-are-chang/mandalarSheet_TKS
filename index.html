@@ -12,9 +12,11 @@
       <section class="hero">
         <p class="eyebrow">マンダラートシート</p>
         <h1>好きなものを書いてみよう！</h1>
-        <p class="lede">
-          それぞれのブロックに書き込むことができる！　編集するブロックは矢印キーで移動できるよ！
-        </p>
+        <h2>使い方</h2>
+        <ul>
+          <li>各ブロックをクリックして入力できるよ！</li>
+          <li>矢印キーで他のブロックに移動できるよ！</li>
+        </ul>
         <div class="toolbar" aria-label="操作バー">
           <button id="resetButton" type="button">全消去</button>
           <span id="status" class="status" aria-live="polite">未保存の変更はありません</span>
@@ -24,14 +26,6 @@
       <section class="board-card" aria-label="マンダラート編集エリア">
         <div id="board" class="board" role="grid" aria-label="マンダラート 9×9 グリッド"></div>
       </section>
-
-      <aside class="notes-card">
-        <h2>使い方</h2>
-        <ul>
-          <li>各ブロックをクリックして直接入力します。</li>
-          <li>矢印キーで次のセルへ移動できます。</li>
-        </ul>
-      </aside>
     </main>
 
     <script src="main.js"></script>
