@@ -49,12 +49,12 @@ const centerTemplates = {
     ],
     [
       { placeholder: "作品のどんなところが好き？" },
-      { placeholder: "作品のどんなところが好き？" },
+      { placeholder: "ここに、好きな作品を書いてみよう" },
       { placeholder: "作品のどんなところが好き？" },
     ],
     [
       { placeholder: "作品のどんなところが好き？" },
-      { placeholder: "ここに、好きな作品を書いてみよう" },
+      { placeholder: "作品のどんなところが好き？" },
       { placeholder: "作品のどんなところが好き？" },
     ],
   ],
