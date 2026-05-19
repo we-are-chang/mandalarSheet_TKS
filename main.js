@@ -43,7 +43,7 @@ let saveTimer = null;
 const centerTemplates = {
   game: [
     [
-      { placeholder: "一番好きなキャラクターは何かな" },
+      { value: "好きなキャラクターは何かな" },
       { placeholder: "どの機能が好きかな" },
       { placeholder: "音楽、デザインはどうかな？" },
     ],
