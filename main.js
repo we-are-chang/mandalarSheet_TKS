@@ -43,19 +43,19 @@ let saveTimer = null;
 const centerTemplates = {
   game: [
     [
-      { value: "どうやって遊ぶかな？" },
-      { value: "ゲームの魅力を書いてみて！" },
-      { value: "どんな機能が使われているかな？" },
+      { placeholder: "一番好きなキャラクターは何かな" },
+      { placeholder: "どの機能が好きかな" },
+      { placeholder: "音楽、デザインはどうかな？" },
     ],
     [
-      { value: "どんな人がハマっていそう？" },
-      { placeholder: "ここに、自分の好きなゲームを書いてみよう" },
-      { value: "特にどんな時が楽しい？" },
+      { placeholder: "作品のどんなところが好き？" },
+      { placeholder: "作品のどんなところが好き？" },
+      { placeholder: "作品のどんなところが好き？" },
     ],
     [
-      { placeholder: "自分で深掘りポイントを考えてみよう！" },
-      { placeholder: "自分で深掘りポイントを考えてみよう！" },
-      { placeholder: "自分で深掘りポイントを考えてみよう！" },
+      { placeholder: "作品のどんなところが好き？" },
+      { placeholder: "作品のどんなところが好き？" },
+      { placeholder: "作品のどんなところが好き？" },
     ],
   ],
   moyamoya: [
