@@ -6,6 +6,7 @@ const statusEl = document.getElementById("status");
 const resetButton = document.getElementById("resetButton");
 const sampleGameButton = document.getElementById("sampleGameButton");
 const sampleMoyamoyaButton = document.getElementById("sampleMoyamoyaButton");
+const sampleFavoriteButton = document.getElementById("sampleFavoriteButton");
 
 const blockHues = [
   12,
@@ -43,8 +44,8 @@ let saveTimer = null;
 const centerTemplates = {
   game: [
     [
-      { value: "好きなキャラクターは何かな" },
-      { placeholder: "どの機能が好きかな" },
+      { placeholder: "好きなキャラクターは誰かな？" },
+      { placeholder: "どの機能が好きかな？" },
       { placeholder: "音楽、デザインはどうかな？" },
     ],
     [
@@ -60,19 +61,36 @@ const centerTemplates = {
   ],
   moyamoya: [
     [
-      { value: "どうして困っているのかな？" },
-      { value: "いつ・どこで困るかな？" },
-      { value: "どんな人が困っているかな？" },
+      { placeholder: "どうして困っているのかな？" },
+      { placeholder: "いつ・どこで困るかな？" },
+      { placeholder: "どんな人が困っているかな？" },
     ],
     [
-      { value: "どうやって解決したいかな？" },
+      { placeholder: "どうやって解決したいかな？" },
       { placeholder: "ここに、解決したいモヤモヤを書いてみよう" },
-      { value: "何かに例えたりできないかな？" },
+      { placeholder: "何かに例えたりできないかな？" },
     ],
     [
       { placeholder: "自分で深掘りポイントを考えてみよう！" },
       { placeholder: "自分で深掘りポイントを考えてみよう！" },
       { placeholder: "自分で深掘りポイントを考えてみよう！" },
+    ],
+  ],
+  favorite: [
+    [
+      { placeholder: "好きになった時の自分を書いてみよう！" },
+      { placeholder: "どういう所が一番「好き」かな？" },
+      { placeholder: "好きなもので、やってみたいことはあるかな？" },
+    ],
+    [
+      { placeholder: "自分で推しポイントを書いてみよう！"  },
+      { placeholder: "ここに、自分の好きなものを書いてみよう" },
+      { placeholder: "自分で推しポイントを書いてみよう！" },
+    ],
+    [
+      { placeholder: "自分で推しポイントを書いてみよう！" },
+      { placeholder: "自分で推しポイントを書いてみよう！" },
+      { placeholder: "自分で推しポイントを書いてみよう！" },
     ],
   ],
 };
@@ -285,6 +303,7 @@ function clearBoard() {
 resetButton.addEventListener("click", clearBoard);
 sampleGameButton.addEventListener("click", () => applyCenterTemplate(centerTemplates.game));
 sampleMoyamoyaButton.addEventListener("click", () => applyCenterTemplate(centerTemplates.moyamoya));
+sampleFavoriteButton.addEventListener("click", () => applyCenterTemplate(centerTemplates.favorite));
 
 renderBoard();
 syncAllLinkedCells();
