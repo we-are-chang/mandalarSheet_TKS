@@ -7,6 +7,10 @@ const resetButton = document.getElementById("resetButton");
 const sampleGameButton = document.getElementById("sampleGameButton");
 const sampleMoyamoyaButton = document.getElementById("sampleMoyamoyaButton");
 const sampleFavoriteButton = document.getElementById("sampleFavoriteButton");
+const exportButton = document.getElementById("exportButton");
+const importButton = document.getElementById("importButton");
+const csvFileInput = document.getElementById("csvFileInput");
+const saveImageButton = document.getElementById("saveImageButton");
 
 const blockHues = [
   12,
@@ -300,10 +304,128 @@ function clearBoard() {
   persistState();
 }
 
-resetButton.addEventListener("click", clearBoard);
+resetButton.addEventListener("click", () => {
+  if (confirm("本当にすべての内容を消去しますか？")) {
+    clearBoard();
+  }
+});
 sampleGameButton.addEventListener("click", () => applyCenterTemplate(centerTemplates.game));
 sampleMoyamoyaButton.addEventListener("click", () => applyCenterTemplate(centerTemplates.moyamoya));
 sampleFavoriteButton.addEventListener("click", () => applyCenterTemplate(centerTemplates.favorite));
+
+function getGridData() {
+  const gridData = [];
+  for (let row = 0; row < GRID_SIZE; row++) {
+    const rowData = [];
+    for (let col = 0; col < GRID_SIZE; col++) {
+      const index = row * GRID_SIZE + col;
+      // CSVで値がnullやundefinedになるのを防ぐため、空文字に変換
+      const value = state[index] || "";
+      // CSVの区切り文字や改行が含まれている場合に備えて、値をダブルクォーテーションで囲む
+      rowData.push(`"${value.replace(/"/g, '""')}"`);
+    }
+    gridData.push(rowData);
+  }
+  return gridData;
+}
+
+function exportToCSV() {
+  const gridData = getGridData();
+  const csvContent = gridData.map(e => e.join(",")).join("\n");
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", "mandala-sheet.csv");
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+function importFromCSV(csvText) {
+  const rows = csvText.split("\n").map(row => {
+    // ダブルクォーテーションで囲まれたフィールドを正しく解析するための正規表現
+    const regex = /"([^"]*(?:""[^"]*)*)"|([^,]+)/g;
+    const cols = [];
+    let match;
+    while (match = regex.exec(row)) {
+      if (match[1] !== undefined) {
+        // ダブルクォーテーションで囲まれた値
+        cols.push(match[1].replace(/""/g, '"'));
+      } else if (match[2] !== undefined) {
+        // ダブルクォーテーションで囲まれていない値
+        cols.push(match[2]);
+      }
+    }
+    // 行末の空のフィールドを補完
+    const trailingCommas = row.endsWith(',') ? 1 : 0;
+    for (let i = 0; i < trailingCommas; i++) {
+      cols.push('');
+    }
+    return cols;
+  });
+
+  if (rows.length !== GRID_SIZE) {
+    alert(`CSVファイルの形式が正しくありません。${GRID_SIZE}行である必要があります。`);
+    return;
+  }
+
+  for (let i = 0; i < GRID_SIZE; i++) {
+    const cols = rows[i];
+    if (cols.length !== GRID_SIZE) {
+      alert(`CSVファイルの形式が正しくありません。${i + 1}行目が${GRID_SIZE}列ではありません。`);
+      return;
+    }
+    for (let j = 0; j < GRID_SIZE; j++) {
+      const index = i * GRID_SIZE + j;
+      state[index] = cols[j] || "";
+    }
+  }
+
+  syncAllLinkedCells();
+
+  const textareas = board.querySelectorAll("textarea");
+  textareas.forEach((textarea, index) => {
+    textarea.value = state[index];
+    updateCellVisual(index, state[index]);
+  });
+
+  persistState();
+  statusEl.textContent = "CSVからデータを読み込みました";
+}
+
+exportButton.addEventListener("click", exportToCSV);
+importButton.addEventListener("click", () => csvFileInput.click());
+csvFileInput.addEventListener("change", (event) => {
+  const file = event.target.files[0];
+  if (!file) {
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    importFromCSV(e.target.result);
+  };
+  reader.readAsText(file);
+  // 同じファイルを連続で選択できるようにするため
+  event.target.value = '';
+});
+
+function saveAsImage() {
+  const boardElement = document.getElementById('board');
+  html2canvas(boardElement).then(canvas => {
+    const image = canvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.setAttribute("href", image);
+    link.setAttribute("download", "mandala-sheet.png");
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  });
+}
+
+saveImageButton.addEventListener("click", saveAsImage);
 
 renderBoard();
 syncAllLinkedCells();
