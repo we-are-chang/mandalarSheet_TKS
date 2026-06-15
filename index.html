@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="PCブラウザで使えるマンダラート 9×9 編集ページ" />
     <title>Mandala Board</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -22,6 +23,10 @@
           <button id="sampleGameButton" type="button">A. 好きなゲームを深掘り</button>
           <button id="sampleMoyamoyaButton" type="button">B. もやもや解決</button>
           <button id="sampleFavoriteButton" type="button">C. 自分の好きなもの</button>
+          <button id="exportButton" type="button">セーブデータ（csv）を保存!!</button>
+          <button id="importButton" type="button">セーブデータをロード！</button>
+          <button id="saveImageButton" type="button">画像で保存</button>
+          <input type="file" id="csvFileInput" accept=".csv" style="display: none;" />
           <span id="status" class="status" aria-live="polite">未保存の変更はありません</span>
         </div>
       </section>
